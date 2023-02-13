@@ -1,15 +1,18 @@
+#include <esp_Audio_Process.h>
+
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <WebServer.h>
 #include <ESPmDNS.h>
 #include "homepage.h"
 
+
 const char* ssid = "eir74877685";//"eir74877685" "Galaxy A52s 5G"
 const char* password = "NB9rBE2gd8";//"NB9rBE2gd8" "iamaleech"
 
-WebServer server(80);
+//AudioProcess processaudio;
 
-const int led = 13;
+WebServer server(80);
 //function to simulate effect
 String effectDelay(){
   return " ";
@@ -22,7 +25,6 @@ String effectReverb(){
 }
 
 void handleRoot() {
-  digitalWrite(led, 1);
   String message = homePagePart1;
   message += effectDelay();
   message += homePagePart2;
@@ -31,7 +33,6 @@ void handleRoot() {
   message += effectReverb();
   
   server.send(200, "text/html", message);
-  digitalWrite(led, 0);
 }
 void handleKeyPress(){
   String keyPress=server.arg("button");
@@ -40,7 +41,6 @@ void handleKeyPress(){
   server.send(200);
 }
 void handleNotFound() {
-  digitalWrite(led, 1);
   String message = "File Not Found\n\n";
   message += "URI: ";
   message += server.uri();
@@ -53,12 +53,10 @@ void handleNotFound() {
     message += " " + server.argName(i) + ": " + server.arg(i) + "\n";
   }
   server.send(404, "text/plain", message);
-  digitalWrite(led, 0);
 }
 
 void setup(void) {
-  pinMode(led, OUTPUT);
-  digitalWrite(led, 0);
+  //processaudio.prepareAudio();
   Serial.begin(115200);
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
@@ -92,6 +90,7 @@ void setup(void) {
 }
 
 void loop(void) {
+  //processaudio.playAudio();
   server.handleClient();
   delay(2);//allow the cpu to switch to other tasks
 }
